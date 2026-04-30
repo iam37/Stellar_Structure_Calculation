@@ -42,6 +42,7 @@ class StellarStructure:
             print(T_inner)
             print(r_inner)
         M_out = np.linspace(self.M_c, self.M_fit, self.num_iters)
+        #M_out = None
         outward_result = scipy.integrate.solve_ivp(derivs, t_span = (self.M_c, self.M_fit), y0=(L_inner, P_inner, T_inner, r_inner), t_eval = M_out, args=(self.composition, self.interpolator), method='Radau', 
                                                  rtol=1e-6, atol=1e-10)
         if outward_result.status == -1:
@@ -55,6 +56,7 @@ class StellarStructure:
         L_outer, P_outer, T_outer, r_outer, rho_outer = load2(self.Mstar, self.composition, Lstar, Rstar, self.interpolator)
         
         M_in = np.linspace(self.Mstar, self.M_fit, self.num_iters)
+        #M_in = None
         inward_result = scipy.integrate.solve_ivp(derivs, t_span = (self.Mstar, self.M_fit), y0=(L_outer, P_outer, T_outer, r_outer), t_eval = M_in, args = (self.composition, self.interpolator), method='Radau', 
                                                  rtol=1e-6, atol=1e-10)
         #inward_result = scipy.integrate.solve_ivp(derivs, t_span = (self.Mstar, self.M_fit), y0=(L_outer, P_outer, T_outer, r_outer), t_eval = M_in, args = (self.composition, self.interpolator), method='Radau')
