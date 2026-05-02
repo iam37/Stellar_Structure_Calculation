@@ -108,7 +108,7 @@ def derivs(M_r, y, composition, interpolator):
 
     nabla_rad = 3/(16*np.pi*a*c) * P * kappa/T**4 * L/(G * M_r)
     beta = 1-(a*T**4)/(3*P)
-    nabla_ad = (2*(4-3*beta))/(32-24*beta-3beta**2)
+    nabla_ad = (2*(4-3*beta))/(32-24*beta-3*beta**2)
     if nabla_rad <= nabla_ad:
         nabla = nabla_rad
     else:
@@ -148,7 +148,7 @@ def calculate_nabla(T, M_r, Lr, Pr, kappa):
     
     nabla_rad = 3/(16*np.pi*a*c) * Pr * kappa/T**4 * Lr/(G * M_r)
     beta = 1-(a*T**4)/(3*Pr)
-    nabla_ad = (2*(4-3*beta))/(32-24*beta-3beta**2)
+    nabla_ad = (2*(4-3*beta))/(32-24*beta-3*beta**2)
     nabla = 0.0
     convective = False
     
@@ -207,8 +207,8 @@ def load1(M_r, composition, Pc, Tc, interpolator):
     #Determine if we are in a convective or radiative layer
     nabla_rad = 3/(16*np.pi*a*c) * Pr * kappa_c/Tr_rad**4 * Lr/(G * M_r)
     beta = 1-(a*Tc**4)/(3*Pc)
-    nabla_adc = (2*(4-3*beta))/(32-24*beta-3beta**2)
-    if nabla_rad < nabla_ad:
+    nabla_adc = (2*(4-3*beta))/(32-24*beta-3*beta**2)
+    if nabla_rad <= nabla_ad:
         Tr = Tr_rad
         nabla = nabla_rad
     else:
