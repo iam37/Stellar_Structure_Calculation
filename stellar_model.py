@@ -161,11 +161,11 @@ class StellarStructure:
         
         #kappa_array = interp_opacity(np.log10(rho_array), np.log10(T_array), self.interpolator)
         
-        nabla_array, convective_bool = calculate_nabla(T_array, masses, L_array, P_array, kappa_array)
+        nabla_array, nablas, convective_bool = calculate_nabla(T_array, masses, L_array, P_array, kappa_array)
         
         # Calculate energy-generation rates for different temperatures in the star.
 
 
-        return L_array, P_array, T_array, R_array, rho_array, masses, kappa_array, nabla_array, convective_bool, (e_pp_array, e_cno_array)
+        return L_array, P_array, T_array, R_array, rho_array, masses, kappa_array, nabla_array, nablas, convective_bool, (e_pp_array, e_cno_array)
         
     

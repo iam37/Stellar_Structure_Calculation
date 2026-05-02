@@ -153,7 +153,7 @@ def calculate_nabla(T, M_r, Lr, Pr, kappa):
     convective = False
     
     nabla = np.where(nabla_rad < nabla_ad, nabla_rad, nabla_ad)
-    convective = nabla_rad <= nabla_ad
+    convective = np.where(nabla_rad < nabla_ad, False, True)
     #if nabla_rad < nabla_ad:
     #    nabla = nabla_rad
     #    convective = False
@@ -161,7 +161,7 @@ def calculate_nabla(T, M_r, Lr, Pr, kappa):
     #    nabla = nabla_ad
     #    convective = True
         
-    return nabla, convective
+    return nabla, (nabla_rad, nabla_ad), convective
     
     
 def load1(M_r, composition, Pc, Tc, interpolator):
@@ -198,6 +198,9 @@ def load1(M_r, composition, Pc, Tc, interpolator):
     # print(f"epsilon_c = {epsilon_c}")
 
     Tr = 0
+    
+    beta = 1-(a*Tc**4)/(3*Pc)
+    nabla_adc = (2*(4-3*beta))/(32-24*beta-3*beta**2)
 
     Tr_rad = (Tc**4 - 1/(2*a*c) * (3/(4*np.pi))**(2/3) * kappa_c * epsilon_c * rho_c**(4/3) * M_r**(2/3))**(1/4)
     logTr = np.log10(Tc) - (np.pi/6)**(1/3) * G * nabla_adc * rho_c**(4/3)/(Pc) * M_r**(2/3)
@@ -206,14 +209,12 @@ def load1(M_r, composition, Pc, Tc, interpolator):
 
     #Determine if we are in a convective or radiative layer
     nabla_rad = 3/(16*np.pi*a*c) * Pr * kappa_c/Tr_rad**4 * Lr/(G * M_r)
-    beta = 1-(a*Tc**4)/(3*Pc)
-    nabla_adc = (2*(4-3*beta))/(32-24*beta-3*beta**2)
-    if nabla_rad <= nabla_ad:
+    if nabla_rad <= nabla_adc:
         Tr = Tr_rad
         nabla = nabla_rad
     else:
         Tr = Tr_conv
-        nabla = nabla_ad
+        nabla = nabla_adc
     return (Lr, Pr, Tr, r_c, rho_c, nabla)
 
 def load2(M, composition, Lstar, Rstar, interpolator):
