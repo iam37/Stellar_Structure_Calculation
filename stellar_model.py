@@ -143,9 +143,29 @@ class StellarStructure:
         P_array = soln[1, :]
         T_array = soln[2, :]
         R_array = soln[3, :]
-
+        
         rho_array = calculate_rho(P_array, T_array, self.mu)
+        
+        # Calculate nabla values with the final stellar properties. This will enable us to determine which parts of the star are convective or radiative. 
+        kappa_array = []
+        e_pp_array = []
+        e_cno_array = []
+        X, Y = self.composition
+        for T, rho in zip(T_array, rho_array):
+            kappa = interp_opacity(np.log10(rho), np.log10(T), self.interpolator)
+            kappa_array.append(kappa)
+            
+            e_pp, e_cno = calculate_energies(rho, T, X, Y)
+            e_pp_array.append(e_pp)
+            e_cno_array.append(e_cno)
+        
+        #kappa_array = interp_opacity(np.log10(rho_array), np.log10(T_array), self.interpolator)
+        
+        nabla_array, convective_bool = calculate_nabla(T_array, masses, L_array, P_array, kappa_array)
+        
+        # Calculate energy-generation rates for different temperatures in the star.
 
-        return L_array, P_array, T_array, R_array, rho_array, masses
+
+        return L_array, P_array, T_array, R_array, rho_array, masses, kappa_array, nabla_array, convective_bool, (e_pp_array, e_cno_array)
         
     

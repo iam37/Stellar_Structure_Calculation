@@ -73,6 +73,14 @@ def P_equations(rho_values, T, M, Rstar, mu, interpolator):
 
     return 1-(P1/P2)
 
+def calc_g(M, R):
+    G = 6.674*10**(-8)
+    return GM/R**2
+
+def calc_Teff(L, R):
+    sigma = 5.67*10**(-5)
+    return (L/(4*np.pi*sigma))**(1/4)
+
 def derivs(M_r, y, composition, interpolator):
 
     K = 1.38*10**(-16)
@@ -99,8 +107,9 @@ def derivs(M_r, y, composition, interpolator):
     kappa = interp_opacity(np.log10(rho), np.log10(T), interpolator)
 
     nabla_rad = 3/(16*np.pi*a*c) * P * kappa/T**4 * L/(G * M_r)
-    nabla_ad = 0.4
-    if nabla_rad < nabla_ad:
+    beta = 1-(a*T**4)/(3*P)
+    nabla_ad = (2*(4-3*beta))/(32-24*beta-3beta**2)
+    if nabla_rad <= nabla_ad:
         nabla = nabla_rad
     else:
         nabla = nabla_ad
@@ -129,6 +138,32 @@ def calculate_rho(P, T, mu):
     rho = (P - 1/3 * a * T**4)*mu/(N_a * K * T)
     return rho
 
+def calculate_nabla(T, M_r, Lr, Pr, kappa):
+    K = 1.38*10**(-16)
+    N_a = 6.0221408 * 10**(23)
+
+    a = 7.56557705*10**(-15)
+    c = 2.998*10**(10)
+    G = 6.674*10**(-8)
+    
+    nabla_rad = 3/(16*np.pi*a*c) * Pr * kappa/T**4 * Lr/(G * M_r)
+    beta = 1-(a*T**4)/(3*Pr)
+    nabla_ad = (2*(4-3*beta))/(32-24*beta-3beta**2)
+    nabla = 0.0
+    convective = False
+    
+    nabla = np.where(nabla_rad < nabla_ad, nabla_rad, nabla_ad)
+    convective = nabla_rad <= nabla_ad
+    #if nabla_rad < nabla_ad:
+    #    nabla = nabla_rad
+    #    convective = False
+    #else:
+    #    nabla = nabla_ad
+    #    convective = True
+        
+    return nabla, convective
+    
+    
 def load1(M_r, composition, Pc, Tc, interpolator):
     # Gives the value of T, L, r, and P just slightly off from the center of the star
     #print("got here")
@@ -144,8 +179,6 @@ def load1(M_r, composition, Pc, Tc, interpolator):
     
     X, Y = composition
     mu = 4/(3+5*X)
-
-    nabla_adc = 0.4
 
     # Equation of state
     rho_c = calculate_rho(Pc, Tc, mu)
@@ -173,7 +206,8 @@ def load1(M_r, composition, Pc, Tc, interpolator):
 
     #Determine if we are in a convective or radiative layer
     nabla_rad = 3/(16*np.pi*a*c) * Pr * kappa_c/Tr_rad**4 * Lr/(G * M_r)
-    nabla_ad = 0.4
+    beta = 1-(a*Tc**4)/(3*Pc)
+    nabla_adc = (2*(4-3*beta))/(32-24*beta-3beta**2)
     if nabla_rad < nabla_ad:
         Tr = Tr_rad
         nabla = nabla_rad

@@ -14,7 +14,7 @@ def interp_opacity(log_rho, logT, interpolator):
     logT_min, logT_max = interpolator.grid[0].min(), interpolator.grid[0].max()
     logR_min, logR_max = interpolator.grid[1].min(), interpolator.grid[1].max()
 
-    if (logT < logT_min) or (logT > logT_max) or np.isnan(logT):
+    if np.any(logT < logT_min) or np.any(logT > logT_max) or np.isnan(logT):
         print(f"logT = {logT} value is outside range for provided table.")
         return 1e10
 
@@ -25,7 +25,7 @@ def interp_opacity(log_rho, logT, interpolator):
     
     logR = np.log10(R)
 
-    if (logR < logR_min) or (logR > logR_max) or np.isnan(logR):
+    if np.any(logR < logR_min) or np.any(logR > logR_max) or np.isnan(logR):
         print(f"logR = {logR} value is oustide range for provided table.")
         return 1e10
 
