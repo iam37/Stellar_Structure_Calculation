@@ -123,7 +123,7 @@ class StellarStructure:
         Lc_final, Pc_final, Tc_final, rc_final, rhoc_final, nabla_c_final = load1(self.M_c, self.composition, Pc_final, Tc_final, self.interpolator)
         Lstar_final, Pstar_final, T_eff, Rstar_final, rho_surface_final = load2(self.M_c, self.composition, Lstar_final, Rstar_final, self.interpolator)
         print(f"Final central params: Pc: {Pc_final:e}, Tc: {Tc_final:e}, Rc: {rc_final:e}, rho_c: {rhoc_final:e}")
-        print(f"Final total params: P_surface = {Pstar_final:e}, T_eff = {T_eff:e}, Rstar = {Rstar_final:e}, rho_surface={rho_surface_final:e}")
+        print(f"Final total params: P_surface = {Lstar_final:e}, T_eff = {T_eff:e}, Rstar = {Rstar_final:e}, rho_surface={rho_surface_final:e}")
         print(f"Constructing final model...")
         M_out = np.linspace(self.M_c, self.M_fit, self.num_iters)
         M_in = np.linspace(self.Mstar, self.M_fit, self.num_iters)

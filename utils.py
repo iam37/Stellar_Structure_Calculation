@@ -40,7 +40,7 @@ def calculate_energies(rho, T, X, Y):
     #e_pp = psi * f_11 * g_11 * rho * X**2 * (T9)**(-2/3) * np.exp(-3.381/T9**(1/3))
 
     g_14 = 1 - 2.00*(T9) + 3.41 * (T9)**2 - 2.43*(T9)**3
-    e_cno = 8.24 * 10**(25) * g_14 * Z * (X/1) * rho * (T9)**(-2/3) * np.exp(-15.231*(T9)**(-1/3) - (T9/0.8)**2) 
+    e_cno = 8.24 * 10**(25) * g_14/1 * Z * (X/1) * rho * (T9)**(-2/3) * np.exp(-15.231*(T9)**(-1/3) - (T9/0.8)**2) 
     # print(f"Energy from CNO: {e_cno}")
     # print(f"Energy from PP-chain: {e_pp}")
 
